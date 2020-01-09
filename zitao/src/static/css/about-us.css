@@ -1,0 +1,109 @@
+/* 公司简介 */
+.profile {
+  display: flex;
+  margin-top: 30px;
+  width: 100%;
+  height: 496px;
+}
+
+.profile-content {
+  margin-top: 85px;
+  width: 814px;
+  height: 381px;
+  padding: 15px 32px;
+  background-image: url(../img/profile-bg.jpg);
+}
+
+.profile-content p {
+  line-height: 30px;
+  white-space: normal;
+  font-family: 'Microsoft YaHei';
+  color: #5A5A5A;;
+  text-indent: 30px;
+}
+
+.profile-img {
+  width: 322px;
+}
+
+.profile-img img {
+  margin-bottom: -4px;
+}
+
+@media only screen and (max-width: 415px) {
+  .profile {
+    display: block;
+    margin-top: 0;
+    height: auto;
+  }
+
+  .profile-content {
+    margin-top: 0;
+    width: 100%;
+    height: auto;
+    padding: 0;
+  }
+
+  .profile-img {
+    display: none;
+  }
+}
+
+/* 联系我们 */
+.contact {
+  display: flex;
+  margin: 20px auto;
+}
+
+.contact-img {
+  width: 534px;
+  height: 270px;
+  background-color: #2ccc90;
+}
+
+.contact-img img {
+  position: relative;
+  top: 35px;
+  left: 35px;
+}
+
+.contact-content {
+  margin: 60px 0px 0 90px;
+  padding: 20px;
+  width: 480px;
+  height: 110px;
+  border: 1px solid #2ccc90;
+  
+}
+
+.contact-content p {
+  color: #666666;
+  line-height: 2;
+}
+
+@media only screen and (max-width: 415px) {
+  .contact {
+    display: block;
+    margin: 0 auto;
+  }
+
+  .contact-img {
+    width: 85%;
+    height: auto;
+    background-color: #2ccc90;
+    padding: 5vw;
+  }
+
+  .contact-img img {
+    position: relative;
+    width: 95vw;
+    top: 0;
+    left: 0;
+  }
+
+  .contact-content {
+    margin: 1px 0;
+    width: auto;
+    padding: 10px;
+  }
+}
