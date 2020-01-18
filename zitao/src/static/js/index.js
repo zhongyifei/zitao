@@ -1,94 +1,118 @@
-window.onload = function(){
-	function $(param){
-		if(arguments[1] == true){
-			return document.querySelectorAll(param);
-		}else{
-			return document.querySelector(param);
-		}
-	}
-	var $box = $(".box");
-	var $box1 = $(".box-1 ul li",true);
-	var $box2 = $(".box-2 ul");
-	var $box3 = $(".box-3");
-	var $length = $box1.length;
-	
-	var str = "";
-	for(var i =0;i<$length;i++){
-		if(i==0){
-			str +="<li class='on'>"+(i+1)+"</li>";
-		}else{
-			str += "<li>"+(i+1)+"</li>";
-		}
-	}
-	$box2.innerHTML = str;
-	
-	var current = 0;
-	
-	var timer;
-	timer = setInterval(go,4000);
-	function go(){
-		for(var j =0;j<$length;j++){
-			$box1[j].style.display = "none";
-			$box2.children[j].className = "";
-		}
-		if($length == current){
-			current = 0;
-		}
-		$box1[current].style.display = "block";
-		$box2.children[current].className = "on";
-		current++;
-	}
-	
-	for(var k=0;k<$length;k++){
-		$box1[k].onmouseover = function(){
-			clearInterval(timer);
-		}
-		$box1[k].onmouseout = function(){
-			timer = setInterval(go,4000);
-		}
-	}
-	for(var p=0;p<$box3.children.length;p++){
-		$box3.children[p].onmouseover = function(){
-			clearInterval(timer);
-		};
-		$box3.children[p].onmouseout = function(){
-			timer = setInterval(go,4000);
-		}
-	}
-	
-	for(var u =0;u<$length;u++){
-		$box2.children[u].index  = u;
-		$box2.children[u].onmouseover = function(){
-			clearInterval(timer);
-			for(var j=0;j<$length;j++){
-				$box1[j].style.display = "none";
-				$box2.children[j].className = "";
-			}
-			this.className = "on";
-			$box1[this.index].style.display = "block";
-			current = this.index +1;
-		}
-		$box2.children[u].onmouseout = function(){
-			timer = setInterval(go,4000);
-		}
-	}
-	
-	$box3.children[0].onclick = function(){
-		back();
-	}
-	$box3.children[1].onclick = function(){
-		go();
-	}
-	function back(){
-		for(var j =0;j<$length;j++){
-			$box1[j].style.display = "none";
-			$box2.children[j].className = "";
-		}
-		if(current == 0){
-			current = $length;
-		}
-		$box1[current-1].style.display = "block";
-		$box2.children[current-1].className = "on";
-		current--;
-	}
-}
+(() => {
+  let loop
+  const TOTAL = 4
+  const SLIDE_WIDTH = 100  // 单位%
+  const WRAPPER = document.getElementsByClassName('carousel-wrapper')[0]
+  const PAGINATIONS = document.getElementsByClassName('pagination')
+
+  window.onload = () => {
+    // 初始化
+    WRAPPER.style.left = `-${SLIDE_WIDTH}%`
+    PAGINATIONS[0].style.backgroundColor = '#2ccc90'
+
+    startLoop()
+    clickBus()
+  }
+
+  // 开始循环播放
+  const startLoop = () => {
+    const MOVE_SPACE = 1
+    let targetSpace = 1 + MOVE_SPACE
+
+    clearInterval(loop)
+
+    loop = setInterval(() => {
+      targetSpace = getCurrentSpace() + MOVE_SPACE
+      setSlide(targetSpace)
+      setPagination(targetSpace)
+    },5000);
+  }
+
+  const getCurrentSpace = () => {
+    let currentSpace = 1
+    let currentLeft = WRAPPER.style.left
+
+    if (currentLeft) {
+      currentSpace = parseInt(currentLeft.replace(/%/g, '') / -SLIDE_WIDTH)
+    } else {
+      WRAPPER.style.left = `-${SLIDE_WIDTH}%`
+    }
+    return currentSpace
+  }
+
+  const setSlide = (targetSpace) => {
+    WRAPPER.style.transition = '1s'
+    setTimeout(() => {
+      document.getElementsByClassName('box-4')[0].style.display = 'block'
+    }, 500)
+    if (targetSpace > 0 && targetSpace <= TOTAL) {
+      WRAPPER.style.left = `-${targetSpace * SLIDE_WIDTH}%`
+      if(targetSpace > 2) {
+        setTimeout(() => {
+          document.getElementsByClassName('box-4')[0].style.display = 'none'
+        }, 500)
+      }
+    } else if (targetSpace > TOTAL) {  // 最后 -> 最前
+      WRAPPER.style.left = `-${targetSpace * SLIDE_WIDTH}%`
+      setTimeout(() => {
+        // 清除切换特效
+        WRAPPER.style.transition = '0s';
+        WRAPPER.style.left = `-${SLIDE_WIDTH}%`
+      }, 1000);
+    } else {  // 最前 -> 最后
+      WRAPPER.style.left = '0%'
+      setTimeout(() => {
+        WRAPPER.style.transition = '0s';
+        WRAPPER.style.left = `-${TOTAL * SLIDE_WIDTH}%`
+      }, 1000);
+    }
+  }
+
+  const setPagination = (targetSpace) => {
+    if(targetSpace > TOTAL) targetSpace = 1
+    if(targetSpace < 1) targetSpace = TOTAL
+
+    for (let i = 0; i < TOTAL; i++) {
+      PAGINATIONS[i].style.backgroundColor = '#fff'
+    }
+
+    PAGINATIONS[Math.round(targetSpace - 1)].style.backgroundColor = '#2ccc90'
+  }
+
+
+  // 绑定点击事件
+  const clickBus = () => {
+    let targetSpace
+
+    // 绑定向前点击事件
+    document.getElementsByClassName('slide-prev')[0].onclick = () => {
+      const MOVE_SPACE = -1
+      targetSpace = getCurrentSpace() + MOVE_SPACE
+      handleClick(targetSpace)
+    }
+
+    // 绑定向后点击事件
+    document.getElementsByClassName('slide-next')[0].onclick = () => {
+      const MOVE_SPACE = 1
+      targetSpace = getCurrentSpace() + MOVE_SPACE
+      handleClick(targetSpace)
+    }
+
+    // 绑定页签点击事件
+    for (let i = 0; i < 4; i++) {
+      PAGINATIONS[i].onclick = () => {
+        targetSpace = i + 1
+        WRAPPER.style.left = `-${targetSpace * SLIDE_WIDTH}vm`
+        handleClick(targetSpace)
+      }
+    }
+  }
+
+  // 手动点击后，暂停轮播， 10秒后再开始播放
+  const handleClick = (targetSpace) => {
+    setSlide(targetSpace)
+    setPagination(targetSpace)
+    clearInterval(loop)
+    setTimeout('startLoop()', 10000);
+  }
+})()
